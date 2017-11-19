@@ -2,7 +2,7 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 
-public class Jugador {
+public class Jugador implements Runnable{
 	
 	private int x;
 	private int y;
@@ -10,11 +10,13 @@ public class Jugador {
 	private int dy;
 	private SpriteManager sm;
 	private BufferedImage imagen;
-	private boolean moveLeft;
+	private volatile boolean moveLeft;
 	private boolean moveRight;
-	private boolean moveUp;
+	private volatile boolean moveUp;
 	private boolean moveDown;
 	private boolean noMovement;
+	private int cont;
+	private int i;
 	
 	public Jugador(int x, int y){
 		
@@ -27,7 +29,11 @@ public class Jugador {
 		moveUp = false;
 		moveDown = false;
 		sm = new SpriteManager("/imagenes/soldierSpray.png");
-		imagen = sm.subImage(0, 0, 79, 53);
+		imagen = sm.subImage(1, 1, 79, 53);
+		cont = 79;
+		i = 0;
+		Thread t = new Thread(this);
+		t.start();
 		//imagen = ImageManager.cargarImagen("/imagenes/soldier.jpg");
 		
 	}
@@ -53,6 +59,24 @@ public class Jugador {
 			x -= dx;
 		}
 		
+	}
+	
+	public void run(){
+		while(true){
+		if(moveUp){
+			System.out.println("Runing");
+			imagen = sm.subImage(0 + cont * i, 159, 79, 53);
+			i++;
+			if(i == 3)
+				i = 0;
+			try {
+				Thread.sleep(250);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
 	}
 
 	public boolean isMoveLeft() {
